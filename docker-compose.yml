@@ -1,0 +1,52 @@
+version: "3.3"
+
+services:
+    todo-api-service:
+        build: ./backend/.
+        depends_on: 
+            - db
+        environment:
+            - DB_HOST=db
+            - MYSQL_ROOT_PASSWORD
+            - MYSQL_USER
+            - MYSQL_PWD=${MYSQL_PASSWORD}
+        env_file:
+            - ./.env
+        networks:
+            - datab
+            - front
+
+    ingress:
+        build: ./frontend/.
+        image: nginx:1.22
+        volumes:
+            - ./frontend/nginx.conf:/etc/nginx/nginx.conf:ro
+            - ./frontend:/var/www/static/:ro
+        ports:
+            - "81:81"
+        networks:
+            - front
+
+    db:
+        image: mysql:8.0.29-debian
+        volumes:
+            - database:/var/lib/mysql
+            - './init.sql:/docker-entrypoint-initdb.d/i.sql'
+        ports:
+            - "3306:3306"
+        env_file:
+            - ./.env
+        environment:
+            - MYSQL_PASSWORD
+            - MYSQL_ROOT_PASSWORD
+            - MYSQL_USER
+        networks:
+            - datab
+
+volumes:
+    database:
+        driver: 'local'
+
+networks:
+    front:
+    datab:
