@@ -10,8 +10,6 @@ services:
             - MYSQL_ROOT_PASSWORD
             - MYSQL_USER
             - MYSQL_PWD=${MYSQL_PASSWORD}
-        env_file:
-            - ./.env
         networks:
             - datab
             - front
@@ -34,8 +32,6 @@ services:
             - './init.sql:/docker-entrypoint-initdb.d/i.sql'
         ports:
             - "3306:3306"
-        env_file:
-            - ./.env
         environment:
             - MYSQL_PASSWORD
             - MYSQL_ROOT_PASSWORD
